@@ -23,4 +23,6 @@ ok 1 - foo
 1..1
 EOT
 
+is($iter->exit, 0, 'child exited successfully');
+
 done_testing;
