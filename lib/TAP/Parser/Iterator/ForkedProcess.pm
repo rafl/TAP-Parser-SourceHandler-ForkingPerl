@@ -18,15 +18,15 @@ sub _initialize {
         open \*STDOUT, '>&=', $out or die $!;
         open \*STDERR, '>&=', $err_out or die $!;
 
-        # stop inheriting the T::B handles from the parent. that way we can
-        # test ourselfs with plain Test::More, without subtests we run won't
-        # mess things up.
-        my $builder = Test::Builder->new;
-        delete $builder->{Opened_Testhandles};
-        $builder->_open_testhandles;
-        $builder->reset_outputs;
-        $builder->current_test(0);
-
+        if (exists $INC{'Test/Builder.pm'}) {
+            # stop inheriting the T::B handles from the parent. that way we can
+            # test ourselfs with plain Test::More, without subtests we run won't
+            # mess things up.
+            my $builder = Test::Builder->new;
+            delete $builder->{Opened_Testhandles};
+            $builder->_open_testhandles;
+            $builder->reset_outputs;
+            $builder->current_test(0);
 =for me
         # this is probably better, because it's api, but it's more fragile
         Test::Builder->new->output($out);
@@ -34,6 +34,7 @@ sub _initialize {
         Test::Builder->new->todo_output($out);
         Test::Builder->new->current_test(0);
 =cut
+        }
 
         $args->{setup}->();
         do $args->{file};
