@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-use TAP::Parser::Source::Perl;
+use TAP::Parser::Source;
 
 use TAP::Parser::SourceHandler::ForkingPerl;
 
