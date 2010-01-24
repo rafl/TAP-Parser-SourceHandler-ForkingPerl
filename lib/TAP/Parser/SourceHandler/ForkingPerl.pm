@@ -4,7 +4,9 @@ use warnings;
 package TAP::Parser::SourceHandler::ForkingPerl;
 
 use Config;
+use Try::Tiny;
 use IO::Select;
+use Class::Load qw(load_class);
 use TAP::Parser::IteratorFactory;
 use TAP::Parser::Iterator::ForkedProcess;
 
@@ -31,7 +33,22 @@ sub _iterator_hooks {
     );
 }
 
+sub _preload_inc {
+    return 't/lib';
+}
+
 sub _preload_modules {
+    my ($class, $source) = @_;
+
+    my @mods = split q{,} => (($source->config_for($class) || {})->{preload} || '');
+    for my $mod (@mods) {
+        try {
+            load_class($mod);
+        }
+        catch {
+            die "failed to load $mod: $_";
+        }
+    }
 }
 
 sub _get_command_for_switches {
@@ -45,9 +62,11 @@ sub _get_command_for_switches {
 sub _run {
     my ($class, $source, $libs, $switches) = @_;
 
+    my @preload_inc = $class->_preload_inc($source);
+
     {
-        local @INC = (@{ $libs || [] }, @INC);
-        $class->_preload_modules;
+        local @INC = (@preload_inc, @{ $libs || [] }, @INC);
+        $class->_preload_modules($source);
     }
 
     return $class->SUPER::_run($source, $libs, $switches);
