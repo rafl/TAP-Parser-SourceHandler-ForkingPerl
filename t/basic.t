@@ -40,7 +40,7 @@ EOT
     $parser->run;
     $aggr->add('t/tests/preloaded_module.t' => $parser);
 
-    ok($aggr->all_passed, 'foo');
+    ok($aggr->all_passed, 'preload config preloaded the module');
 }
 
 done_testing;
