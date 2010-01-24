@@ -34,7 +34,11 @@ sub _iterator_hooks {
 }
 
 sub _preload_inc {
-    return 't/lib';
+    my ($class, $source) = @_;
+    return (
+        (split $Config{path_sep} => (($source->config_for($class) || {})->{preload_inc} || '')),
+        't/lib',
+    );
 }
 
 sub _preload_modules {
