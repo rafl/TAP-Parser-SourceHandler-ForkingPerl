@@ -32,8 +32,6 @@ sub _iterator_hooks {
 }
 
 sub _preload_modules {
-    require Catalyst;
-    require TestApp;
 }
 
 sub _get_command_for_switches {
